@@ -1,0 +1,224 @@
+/* Reset & body */
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+body { background: #f5f7fa; padding: 30px; display: flex; justify-content: center; }
+
+/* Container */
+.container {
+    background: #fff;
+    padding: 30px 40px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    max-width: 700px;
+    width: 100%;
+}
+.stats-below {
+    position: fixed;        /* sticks to viewport bottom */
+    bottom: 0;              /* bottom of screen */
+    left: 0;
+    width: 100%;            /* full width */
+    height: 40px;           /* fixed height */
+    background: #333;       /* dark background */
+    color: #fff;            /* white text */
+    display: flex;          /* center text */
+    justify-content: center;
+    align-items: center;
+    font-size: 0.95rem;
+    z-index: 1000;          /* on top of everything */
+    box-shadow: 0 -2px 6px rgba(0,0,0,0.3);
+}
+
+
+
+/* Alerts */
+.alert {
+    background: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeeba;
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+/* Book card */
+.book-card {
+    background: #fdfdfd;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 12px 18px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.book-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+}
+
+.book-card h2 {
+    font-size: 16px;
+    color: #007bff;
+    margin: 0;
+}
+
+.book-card p {
+    margin: 0;
+    font-size: 14px;
+    color: #555;
+}
+.book-card p strong{
+    color: #333;
+}
+
+.book-card .description {
+    font-style: italic;
+    color: #666;
+    font-size: 13px;
+}
+
+
+/* Heading */
+h1 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #1a1a1a;
+}
+
+/* Warning box */
+.db-warning {
+    background: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeeba;
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Search box */
+.search-box {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 25px;
+}
+
+.search-box select {
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    transition: border 0.3s, box-shadow 0.3s;
+}
+.search-box input[type="text"],
+.search-box input[type="number"]{
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    transition: border 0.3s, box-shadow 0.3s;
+    width: 50%;
+    overflow: auto;
+}
+
+.search-box select:focus, 
+.search-box input[type="text"]:focus,
+.search-box input[type="number"]:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0,123,255,0.2);
+}
+
+/* Search button */
+.search-box button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    background: #007bff;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+    
+}
+
+.search-box button:hover {
+    background: #0056b3;
+    transform: translateY(-2px);
+}
+
+.search-box button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+/* Modal overlay */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5);
+}
+
+/* Modal content box */
+.modal-content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 25px 30px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    position: relative;
+}
+
+/* Close button */
+.modal .close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    color: #333;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.modal .close:hover {
+    color: #007bff;
+}
+
+.modal h2 { color: #007bff; margin-bottom: 12px; }
+.modal p { font-size: 14px; color: #333; margin-bottom: 10px; }
+.modal .description { font-style: italic; color: #555; font-size: 13px; }
+
+
+
+/* Results */
+#result {
+    background: #f1f3f6;
+    padding: 20px;
+    border-radius: 10px;
+    max-height: 400px;
+    overflow-y: auto;
+    font-family: monospace;
+    font-size: 15px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    border: 1px solid #e0e0e0;
+}
+
+/* Scrollbar styling */
+#result::-webkit-scrollbar { width: 8px; }
+#result::-webkit-scrollbar-track { background: #f1f3f6; border-radius: 8px; }
+#result::-webkit-scrollbar-thumb { background: #ccc; border-radius: 8px; }
+#result::-webkit-scrollbar-thumb:hover { background: #999; }
