@@ -7,9 +7,7 @@ require_once "../core/MasterNode.php";
 require_once "../core/Utils.php";
 
 try {
-    /* =======================
-       TOTAL TIMER & MEMORY
-       ======================= */
+    
     $totalStart = microtime(true);
     $startMemory = memory_get_peak_usage(true);
 
@@ -22,40 +20,40 @@ try {
         exit;
     }
 
-    /* =======================
-       DB + DATA FETCH
-       ======================= */
+    
     $conn = DbConnection::connect();
     $data = new LibraryData($conn);
     $books = $data->fetchAllBooks();
 
     $results = [];
 
-    /* =======================
-       PREPROCESS ONCE
-       ======================= */
+    
     static $master = null;
     if ($master === null && $category !== 'Year') {
         $master = new MasterNode(10);
         $master->preprocess($books);
     }
 
-    /* =======================
-       ALGORITHM TIMER START
-       ======================= */
+    
     $algoStart = microtime(true);
 
-    // YEAR search (linear)
     if ($category === 'Year') {
-        if (!is_numeric($key)) {
-            echo json_encode([]);
-            exit;
-        }
+    if (!is_numeric($key)) {
+        echo json_encode([]);
+        exit;
+    }
 
-        $year = (int)$key;
-        $results = array_filter($books, fn($b) => $b->year == $year);
+    $year = (int)$key;
 
-    } else {
+    // Use master node binary search
+    if ($master === null) {
+        $master = new MasterNode(10);
+        $master->preprocess($books);
+    }
+
+    $results = $master->searchYear($year);
+      }
+      else {
 
         switch (strtolower($category)) {
             case 'title':
@@ -73,20 +71,15 @@ try {
         }
     }
 
-    /* =======================
-       ALGORITHM TIMER END
-       ======================= */
+    
+      // ALGORITHM TIMER END
+      
     $algoTime = microtime(true) - $algoStart;
 
-    /* =======================
-       TOTAL TIMER END
-       ======================= */
+    //TOTAL TIMER END
     $totalTime = microtime(true) - $totalStart;
     $memoryUsed = memory_get_peak_usage(true) - $startMemory;
 
-    /* =======================
-       RESPONSE
-       ======================= */
     echo json_encode([
         'results' => array_values($results),
         'stats' => [
