@@ -75,6 +75,84 @@ body { background: #f5f7fa; padding: 30px; display: flex; flex-direction: column
     background: #f9fbff;
 }
 
+/* Vertical bar chart for scalability benchmark */
+.bar-chart-vertical {
+    margin-top: 18px;
+}
+
+.bar-chart-inner {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 32px;
+    height: 200px;
+    padding: 10px 0 0;
+}
+
+.bar-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.bar-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.bar-rect {
+    width: 40px;
+    border-radius: 6px 6px 0 0;
+}
+
+.bar-rect.hybrid {
+    background: #007bff;
+}
+
+.bar-rect.linear {
+    background: #28a745;
+}
+
+.bar-value-top {
+    margin-top: 4px;
+    font-size: 0.8rem;
+    font-variant-numeric: tabular-nums;
+}
+
+.bar-x-label {
+    margin-top: 4px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.bar-legend {
+    margin-top: 10px;
+    text-align: center;
+    font-size: 0.85rem;
+}
+
+.legend-item {
+    margin: 0 10px;
+}
+
+.legend-color {
+    display: inline-block;
+    width: 14px;
+    height: 10px;
+    border-radius: 3px;
+    margin-right: 4px;
+}
+
+.legend-color.hybrid {
+    background: #007bff;
+}
+
+.legend-color.linear {
+    background: #28a745;
+}
+
 
 
 /* Alerts */

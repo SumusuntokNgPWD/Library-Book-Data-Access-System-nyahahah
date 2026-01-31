@@ -1,4 +1,8 @@
 <?php
+// Allow heavier in-memory processing for large datasets (e.g., 200k+ books)
+@ini_set('memory_limit', '1024M');
+@set_time_limit(60);
+
 header('Content-Type: application/json');
 
 require_once "../config/db.php";

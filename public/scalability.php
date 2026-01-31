@@ -1,4 +1,8 @@
 <?php
+// Allow heavier in-memory processing for scalability benchmarks
+@ini_set('memory_limit', '1024M');
+@set_time_limit(120);
+
 header('Content-Type: application/json');
 
 require_once "../config/db.php";
@@ -16,8 +20,8 @@ try {
         exit;
     }
 
-    // Fixed scalability dataset size: always 10,000
-    $sizes = [10000];
+    // Fixed scalability dataset sizes: 10k, 50k, 100k, 200k
+    $sizes = [10000, 50000, 100000, 200000];
 
     $conn = DbConnection::connect();
     $data = new LibraryData($conn);

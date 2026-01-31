@@ -86,7 +86,7 @@ try {
         <h3>📈 Scalability Benchmark</h3>
         <div class="tool-label">Tool: PHP microtime() + memory_get_peak_usage()</div>
         <div class="tool-label">Tool: Apache JMeter</div>
-        <p style="margin-bottom:10px;color:#555;">Automatically runs hybrid vs linear searches on a fixed dataset size of 10,000 records after each search. Uses current Type &amp; Query above.</p>
+        <p style="margin-bottom:10px;color:#555;">Automatically runs hybrid vs linear searches on fixed dataset sizes of 10,000, 50,000, 100,000, and 200,000 records after each search. Uses current Type &amp; Query above.</p>
         <div id="scalabilityResult"></div>
     </div>
  </div>

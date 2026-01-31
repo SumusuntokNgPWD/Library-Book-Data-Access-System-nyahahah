@@ -212,7 +212,8 @@ async function runScalability(type, query) {
         return;
     }
 
-    const sizes = '10000';
+    // Fixed scalability sizes: 10k, 50k, 100k, 200k
+    const sizes = '10000,50000,100000,200000';
     resultDiv.innerHTML = 'Running scalability test...';
     try {
         const resp = await fetch(`scalability.php?type=${encodeURIComponent(type)}&query=${encodeURIComponent(query)}&sizes=${encodeURIComponent(sizes)}`);
