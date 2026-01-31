@@ -86,14 +86,33 @@ try {
         <h3>📈 Scalability Benchmark</h3>
         <div class="tool-label">Tool: PHP microtime() + memory_get_peak_usage()</div>
         <div class="tool-label">Tool: Apache JMeter</div>
-        <p style="margin-bottom:10px;color:#555;">Runs hybrid vs linear searches across dataset sizes. Uses current Type & Query above.</p>
-        <div class="search-box" style="margin-bottom:12px;">
-            <input type="text" id="sizes" placeholder="Sizes (comma-separated) e.g. 100,500,1000" style="width:60%">
-            <button id="runScalability">Run Scalability Test</button>
-        </div>
+        <p style="margin-bottom:10px;color:#555;">Automatically runs hybrid vs linear searches on a fixed dataset size of 10,000 records after each search. Uses current Type &amp; Query above.</p>
         <div id="scalabilityResult"></div>
     </div>
  </div>
+<!-- Resource usage table -->
+<div class="container" id="resourceUsageContainer">
+    <div class="comparison-card">
+        <h3>🧮 Resource Usage During Search</h3>
+        <div class="tool-label">Tool: Apache JMeter</div>
+        <div class="tool-label">Tool: Windows Task Manager / System Monitor</div>
+        <table class="comparison-table" id="resourceUsageTable">
+            <thead>
+                <tr>
+                    <th>Metric</th>
+                    <th>Value</th>
+                    <th>Unit</th>
+                    <th>Tool Used</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td colspan="4">Run a search to see resource usage metrics.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
 <div id="stats" class="stats-below">
     ⏱ Retrieval time: 0s | 💾 Memory used: 0 bytes
 </div>

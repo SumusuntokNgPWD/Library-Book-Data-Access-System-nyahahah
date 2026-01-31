@@ -9,7 +9,6 @@ require_once "../core/Utils.php";
 try {
     $category = $_GET['type'] ?? '';
     $key = trim($_GET['query'] ?? '');
-    $sizesParam = $_GET['sizes'] ?? '100,500,1000';
 
     $keyNorm = Utils::normalize($key);
     if (!$category || $keyNorm === '') {
@@ -17,9 +16,8 @@ try {
         exit;
     }
 
-    // Parse sizes
-    $sizes = array_values(array_filter(array_map('intval', explode(',', $sizesParam)), function($n){ return $n > 0; }));
-    if (empty($sizes)) $sizes = [100,500,1000];
+    // Fixed scalability dataset size: always 10,000
+    $sizes = [10000];
 
     $conn = DbConnection::connect();
     $data = new LibraryData($conn);

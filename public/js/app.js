@@ -50,6 +50,7 @@ fetch(`search.php?type=${encodeURIComponent(type)}&query=${encodeURIComponent(qu
         const books = data.results || [];
         const stats = data.stats || {};
         const comparison = data.comparison || null;
+        const resourceUsage = data.resource_usage || null;
 
         // Display books (same as before)...
         let out = "";
@@ -96,6 +97,27 @@ fetch(`search.php?type=${encodeURIComponent(type)}&query=${encodeURIComponent(qu
 
 
         statsDiv.innerHTML = `⏱ Algorithm time: ${algoTime.toFixed(5)}s | ⏱ Total time: ${totalTime.toFixed(5)}s | 💾 Memory used: ${memoryUsed} bytes`;
+
+        // Render Resource Usage table if available
+        const ruTable = document.getElementById("resourceUsageTable");
+        if (ruTable && resourceUsage && Array.isArray(resourceUsage) && resourceUsage.length > 0) {
+            const tbody = ruTable.querySelector("tbody");
+            let rows = "";
+            resourceUsage.forEach(r => {
+                const metric = escapeHTML(r.metric ?? "");
+                const value  = escapeHTML(String(r.value ?? "N/A"));
+                const unit   = escapeHTML(r.unit ?? "");
+                const tool   = escapeHTML(r.tool ?? "");
+                rows += `
+                    <tr>
+                        <td>${metric}</td>
+                        <td>${value}</td>
+                        <td>${unit}</td>
+                        <td>${tool}</td>
+                    </tr>`;
+            });
+            tbody.innerHTML = rows;
+        }
 
         // Render Linear vs Hybrid comparison if available
         const cmpDiv = document.getElementById("comparison");
@@ -148,6 +170,9 @@ fetch(`search.php?type=${encodeURIComponent(type)}&query=${encodeURIComponent(qu
             cmpDiv.innerHTML = `<h3>📊 Linear vs Hybrid</h3><p>Unavailable</p>`;
         }
 
+        // Automatically run scalability benchmark for this query (fixed size 10,000)
+        runScalability(type, query);
+
     })
     .catch(() => {
         document.getElementById("result").textContent = "⚠ Search service unavailable.";
@@ -177,18 +202,17 @@ function showDetails(id, title, author, genre, year) {
     window.onclick = (event) => { if (event.target === modal) modal.style.display = "none"; };
 }
 
-// Scalability runner
-document.getElementById('runScalability')?.addEventListener('click', async () => {
-    const type = document.getElementById('type').value;
-    const query = document.getElementById('query').value.trim();
-    const sizes = document.getElementById('sizes').value.trim() || '100,500,1000';
+// Scalability runner (auto, fixed size 10,000)
+async function runScalability(type, query) {
     const resultDiv = document.getElementById('scalabilityResult');
+    if (!resultDiv) return;
 
     if (!query) {
         resultDiv.innerHTML = '<div class="alert">⚠ Enter a query above first.</div>';
         return;
     }
 
+    const sizes = '10000';
     resultDiv.innerHTML = 'Running scalability test...';
     try {
         const resp = await fetch(`scalability.php?type=${encodeURIComponent(type)}&query=${encodeURIComponent(query)}&sizes=${encodeURIComponent(sizes)}`);
@@ -232,4 +256,4 @@ document.getElementById('runScalability')?.addEventListener('click', async () =>
     } catch (e) {
         resultDiv.innerHTML = '<div class="alert">⚠ Scalability service unavailable.</div>';
     }
-});
+}

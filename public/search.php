@@ -11,6 +11,9 @@ try {
     $totalStart = microtime(true);
     $startMemory = memory_get_peak_usage(true);
 
+    // Optional CPU usage baseline (may not be available on all platforms)
+    $ruStart = function_exists('getrusage') ? getrusage() : null;
+
     $category = $_GET['type'] ?? '';
     $key = trim($_GET['query'] ?? '');
     $keyNorm = Utils::normalize($key);
@@ -115,6 +118,21 @@ try {
     $totalTime = microtime(true) - $totalStart;
     $memoryUsed = memory_get_peak_usage(true) - $startMemory;
 
+    // Optional CPU usage measurement (user + system time in ms)
+    $cpuMs = null;
+    if ($ruStart !== null) {
+        $ruEnd = getrusage();
+        if (isset($ruStart["ru_utime.tv_sec"])) {
+            $userStart = $ruStart["ru_utime.tv_sec"] * 1_000_000 + $ruStart["ru_utime.tv_usec"];
+            $userEnd   = $ruEnd["ru_utime.tv_sec"]   * 1_000_000 + $ruEnd["ru_utime.tv_usec"];
+            $sysStart  = $ruStart["ru_stime.tv_sec"] * 1_000_000 + $ruStart["ru_stime.tv_usec"];
+            $sysEnd    = $ruEnd["ru_stime.tv_sec"]   * 1_000_000 + $ruEnd["ru_stime.tv_usec"];
+            $cpuMs = (($userEnd - $userStart) + ($sysEnd - $sysStart)) / 1000.0;
+        }
+    }
+
+    $memoryMb = $memoryUsed / (1024 * 1024);
+
     echo json_encode([
         'results' => array_values($results),
         'stats' => [
@@ -122,7 +140,21 @@ try {
             'total_time_seconds'     => (float)$totalTime,
             'peak_memory_bytes'      => $memoryUsed
         ],
-        'comparison' => $comparison
+        'comparison' => $comparison,
+        'resource_usage' => [
+            [
+                'metric' => 'Memory Usage (RAM)',
+                'value'  => round($memoryMb, 2),
+                'unit'   => 'MB',
+                'tool'   => 'Windows Task Manager / System Monitor'
+            ],
+            [
+                'metric' => 'CPU Time (user + system)',
+                'value'  => $cpuMs !== null ? round($cpuMs, 2) : 'N/A',
+                'unit'   => $cpuMs !== null ? 'ms' : '',
+                'tool'   => 'Apache JMeter + Windows Task Manager / System Monitor'
+            ],
+        ]
     ]);
 
 } catch (Exception $e) {
