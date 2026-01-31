@@ -48,6 +48,12 @@ body { background: #f5f7fa; padding: 30px; display: flex; flex-direction: column
     color: #1a1a1a;
 }
 
+.tool-label {
+    font-size: 0.85rem;
+    color: #555;
+    margin-bottom: 8px;
+}
+
 .comparison-table {
     width: 100%;
     border-collapse: collapse;

@@ -114,6 +114,8 @@ fetch(`search.php?type=${encodeURIComponent(type)}&query=${encodeURIComponent(qu
 
             cmpDiv.innerHTML = `
                 <h3>📊 Linear vs Hybrid</h3>
+                <div class="tool-label">Tool: PHP microtime() + memory_get_peak_usage()</div>
+                <div class="tool-label">Tool: Apache JMeter</div>
                 <table class="comparison-table">
                     <thead>
                         <tr>
@@ -174,3 +176,60 @@ function showDetails(id, title, author, genre, year) {
     // Close modal by clicking outside
     window.onclick = (event) => { if (event.target === modal) modal.style.display = "none"; };
 }
+
+// Scalability runner
+document.getElementById('runScalability')?.addEventListener('click', async () => {
+    const type = document.getElementById('type').value;
+    const query = document.getElementById('query').value.trim();
+    const sizes = document.getElementById('sizes').value.trim() || '100,500,1000';
+    const resultDiv = document.getElementById('scalabilityResult');
+
+    if (!query) {
+        resultDiv.innerHTML = '<div class="alert">⚠ Enter a query above first.</div>';
+        return;
+    }
+
+    resultDiv.innerHTML = 'Running scalability test...';
+    try {
+        const resp = await fetch(`scalability.php?type=${encodeURIComponent(type)}&query=${encodeURIComponent(query)}&sizes=${encodeURIComponent(sizes)}`);
+        const data = await resp.json();
+        const metrics = data.metrics || [];
+
+        if (!metrics.length) {
+            resultDiv.innerHTML = '<div class="alert">No metrics produced.</div>';
+            return;
+        }
+
+        // Build results table
+        let rows = metrics.map(m => `
+            <tr>
+                <td>${m.size}</td>
+                <td>${(m.hybrid?.algorithm_time_seconds || 0).toFixed(5)}</td>
+                <td>${(m.linear?.algorithm_time_seconds || 0).toFixed(5)}</td>
+                <td>${m.peak_memory_bytes || 0}</td>
+                <td>${m.hybrid?.count || 0}</td>
+                <td>${m.linear?.count || 0}</td>
+            </tr>
+        `).join('');
+
+        resultDiv.innerHTML = `
+            <div class="tool-label">Tool: PHP microtime() + memory_get_peak_usage()</div>
+            <div class="tool-label">Tool: Apache JMeter</div>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Dataset Size</th>
+                        <th>Hybrid Time (s)</th>
+                        <th>Linear Time (s)</th>
+                        <th>Peak Memory (bytes)</th>
+                        <th>Hybrid Results</th>
+                        <th>Linear Results</th>
+                    </tr>
+                </thead>
+                <tbody>${rows}</tbody>
+            </table>
+        `;
+    } catch (e) {
+        resultDiv.innerHTML = '<div class="alert">⚠ Scalability service unavailable.</div>';
+    }
+});

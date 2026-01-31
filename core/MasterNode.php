@@ -201,4 +201,67 @@ class MasterNode {
 
         return $results;
     }
+
+    // -------------------------------
+    // SCALABILITY BENCHMARKING
+    // -------------------------------
+    // Runs hybrid and linear searches across varying dataset sizes and reports timing/memory.
+    // sizes: array of positive integers representing dataset sizes to test.
+    public static function benchmarkScalability(array $books, string $field, string $value, array $sizes): array {
+        $metrics = [];
+        $field = strtolower($field);
+
+        foreach ($sizes as $size) {
+            if (!is_int($size) || $size <= 0) continue;
+
+            // Build dataset subset by replication if needed
+            $subset = [];
+            $total = count($books);
+            if ($total === 0) {
+                $metrics[] = [ 'size' => $size, 'error' => 'no_data' ];
+                continue;
+            }
+            for ($i = 0; $i < $size; $i++) {
+                $subset[] = $books[$i % $total];
+            }
+
+            // Prepare master and preprocess
+            $startMem = memory_get_peak_usage(true);
+            $master = new MasterNode(10);
+            $master->preprocess($subset);
+
+            // HYBRID
+            $hyStart = microtime(true);
+            if ($field === 'year') {
+                $year = (int)$value;
+                $hybridResults = $master->searchYear($year);
+            } else {
+                $hybridResults = $master->searchHybrid($field, (string)$value);
+            }
+            $hyAlgo = microtime(true) - $hyStart;
+
+            // LINEAR BASELINE
+            $linStart = microtime(true);
+            if ($field === 'title') {
+                $linearResults = $master->searchTitle((string)$value);
+            } elseif ($field === 'author' || $field === 'genre') {
+                $linearResults = $master->searchDistributed($field, (string)$value);
+            } elseif ($field === 'year') {
+                $year = (int)$value;
+                $linearResults = array_values(array_filter($subset, fn($b)=>$b->year === $year));
+            } else {
+                $linearResults = [];
+            }
+            $linAlgo = microtime(true) - $linStart;
+
+            $metrics[] = [
+                'size' => $size,
+                'hybrid' => [ 'algorithm_time_seconds' => (float)$hyAlgo, 'count' => count($hybridResults) ],
+                'linear' => [ 'algorithm_time_seconds' => (float)$linAlgo, 'count' => count($linearResults) ],
+                'peak_memory_bytes' => memory_get_peak_usage(true) - $startMem
+            ];
+        }
+
+        return $metrics;
+    }
 }

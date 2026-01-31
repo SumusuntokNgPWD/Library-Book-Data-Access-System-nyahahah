@@ -48,6 +48,8 @@ try {
 <div class="container" id="comparisonContainer">
     <div id="comparison" class="comparison-card">
         <h3>📊 Linear vs Hybrid</h3>
+        <div class="tool-label">Tool: PHP microtime() + memory_get_peak_usage()</div>
+        <div class="tool-label">Tool: Apache JMeter</div>
         <table class="comparison-table">
             <thead>
                 <tr>
@@ -77,6 +79,21 @@ try {
         </table>
     </div>
 </div>
+
+<!-- Separate container for scalability benchmarking UI and results -->
+<div class="container" id="scalabilityContainer">
+    <div class="comparison-card">
+        <h3>📈 Scalability Benchmark</h3>
+        <div class="tool-label">Tool: PHP microtime() + memory_get_peak_usage()</div>
+        <div class="tool-label">Tool: Apache JMeter</div>
+        <p style="margin-bottom:10px;color:#555;">Runs hybrid vs linear searches across dataset sizes. Uses current Type & Query above.</p>
+        <div class="search-box" style="margin-bottom:12px;">
+            <input type="text" id="sizes" placeholder="Sizes (comma-separated) e.g. 100,500,1000" style="width:60%">
+            <button id="runScalability">Run Scalability Test</button>
+        </div>
+        <div id="scalabilityResult"></div>
+    </div>
+ </div>
 <div id="stats" class="stats-below">
     ⏱ Retrieval time: 0s | 💾 Memory used: 0 bytes
 </div>
