@@ -106,6 +106,70 @@ class MasterNode {
         return array_values($results);
     }
 
+    // Hybrid text search: binary prefix range + linear contains fallback
+    public function searchHybrid(string $field, string $value): array {
+        $key = Utils::normalize($value);
+        if ($key === '') return [];
+
+        $scored = []; // id => ['book'=>Book,'score'=>int]
+
+        foreach ($this->workers as $worker) {
+            // Choose normalized sorted list for prefix-binary search
+            $normList = match($field) {
+                'title'  => $worker->titleNormSorted,
+                'author' => $worker->authorNormSorted,
+                'genre'  => $worker->genreNormSorted,
+                default  => []
+            };
+
+            // 1) Binary search lower bound for prefix range
+            $low = 0; $high = count($normList);
+            while ($low < $high) {
+                $mid = intdiv($low + $high, 2);
+                if (strcmp($normList[$mid]['norm'], $key) < 0) $low = $mid + 1; else $high = $mid;
+            }
+            $idx = $low;
+            // Walk forward collecting prefix matches
+            while ($idx < count($normList)) {
+                $norm = $normList[$idx]['norm'];
+                if (strncmp($norm, $key, strlen($key)) !== 0) break;
+                $book = $normList[$idx]['book'];
+                $score = ($norm === $key) ? 3 : 2; // exact or starts-with
+                $prev = $scored[$book->id] ?? null;
+                if (!$prev || $score > $prev['score']) {
+                    $scored[$book->id] = ['book'=>$book,'score'=>$score];
+                }
+                $idx++;
+            }
+
+            // 2) Linear fallback for substring contains not covered by prefix
+            $linearList = match($field) {
+                'title'  => $worker->titleSorted,
+                'author' => $worker->authorSorted,
+                'genre'  => $worker->genreSorted,
+                default  => []
+            };
+            foreach ($linearList as $book) {
+                $normVal = Utils::normalize($book->{$field});
+                if (str_contains($normVal, $key)) {
+                    // If not already with higher score, add as contains
+                    $prev = $scored[$book->id] ?? null;
+                    if (!$prev) {
+                        $scored[$book->id] = ['book'=>$book,'score'=>1];
+                    }
+                }
+            }
+        }
+
+        // Sort by score desc, then alphabetical title
+        $arr = array_values($scored);
+        usort($arr, function($a,$b){
+            if ($b['score'] === $a['score']) return strcmp($a['book']->title, $b['book']->title);
+            return $b['score'] - $a['score'];
+        });
+        return array_map(fn($r)=>$r['book'], $arr);
+    }
+
     public function searchYear(int $year): array {
         $low = 0;
         $high = count($this->yearSorted) - 1;

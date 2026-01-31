@@ -1,6 +1,6 @@
 /* Reset & body */
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-body { background: #f5f7fa; padding: 30px; display: flex; justify-content: center; }
+body { background: #f5f7fa; padding: 30px; display: flex; flex-direction: column; align-items: center; }
 
 /* Container */
 .container {
@@ -11,6 +11,11 @@ body { background: #f5f7fa; padding: 30px; display: flex; justify-content: cente
     max-width: 700px;
     width: 100%;
 }
+
+/* spacing between stacked containers */
+.container + .container { margin-top: 16px; }
+/* extra spacing before comparison container */
+.container + #comparisonContainer { margin-top: 20px; }
 .stats-below {
     position: fixed;        /* sticks to viewport bottom */
     bottom: 0;              /* bottom of screen */
@@ -25,6 +30,43 @@ body { background: #f5f7fa; padding: 30px; display: flex; justify-content: cente
     font-size: 0.95rem;
     z-index: 1000;          /* on top of everything */
     box-shadow: 0 -2px 6px rgba(0,0,0,0.3);
+}
+
+/* Inline comparison card (inside container, not fixed) */
+.comparison-card {
+    margin-top: 12px;
+    background: #f7f9fc;
+    border: 1px solid #e0e6ef;
+    border-radius: 8px;
+    padding: 12px 16px;
+    color: #333;
+    font-size: 0.95rem;
+}
+
+.comparison-card h3 {
+    margin-bottom: 8px;
+    color: #1a1a1a;
+}
+
+.comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 2px solid #9aa3b2;
+}
+
+.comparison-table thead tr {
+    background: #e9eef6;
+}
+
+.comparison-table th,
+.comparison-table td {
+    border: 1px solid #9aa3b2;
+    padding: 8px 10px;
+    text-align: center;
+}
+
+.comparison-table tbody tr:nth-child(odd) {
+    background: #f9fbff;
 }
 
 

@@ -49,6 +49,7 @@ fetch(`search.php?type=${encodeURIComponent(type)}&query=${encodeURIComponent(qu
     .then(data => {
         const books = data.results || [];
         const stats = data.stats || {};
+        const comparison = data.comparison || null;
 
         // Display books (same as before)...
         let out = "";
@@ -95,6 +96,55 @@ fetch(`search.php?type=${encodeURIComponent(type)}&query=${encodeURIComponent(qu
 
 
         statsDiv.innerHTML = `⏱ Algorithm time: ${algoTime.toFixed(5)}s | ⏱ Total time: ${totalTime.toFixed(5)}s | 💾 Memory used: ${memoryUsed} bytes`;
+
+        // Render Linear vs Hybrid comparison if available
+        const cmpDiv = document.getElementById("comparison");
+        if (comparison) {
+            const lin = comparison.linear || {};
+            const hyb = comparison.hybrid || {};
+            const linAlgo = (lin.algorithm_time_seconds || 0).toFixed(5);
+            const linTotal = (lin.total_time_seconds || 0).toFixed(5);
+            const linMem = lin.peak_memory_bytes || 0;
+            const linCount = lin.count || 0;
+
+            const hyAlgo = (hyb.algorithm_time_seconds || 0).toFixed(5);
+            const hyTotal = (hyb.total_time_seconds || 0).toFixed(5);
+            const hyMem = hyb.peak_memory_bytes || 0;
+            const hyCount = hyb.count || 0;
+
+            cmpDiv.innerHTML = `
+                <h3>📊 Linear vs Hybrid</h3>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Algorithm</th>
+                            <th>Algo Time (s)</th>
+                            <th>Total Time (s)</th>
+                            <th>Memory (bytes)</th>
+                            <th>Results</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Linear</td>
+                            <td>${linAlgo}</td>
+                            <td>${linTotal}</td>
+                            <td>${linMem}</td>
+                            <td>${linCount}</td>
+                        </tr>
+                        <tr>
+                            <td>Hybrid</td>
+                            <td>${hyAlgo}</td>
+                            <td>${hyTotal}</td>
+                            <td>${hyMem}</td>
+                            <td>${hyCount}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            `;
+        } else {
+            cmpDiv.innerHTML = `<h3>📊 Linear vs Hybrid</h3><p>Unavailable</p>`;
+        }
 
     })
     .catch(() => {

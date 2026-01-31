@@ -6,6 +6,11 @@ class WorkerNode {
     public array $authorSorted = [];
     public array $genreSorted = [];
 
+    // Normalized, sorted lists for hybrid prefix-binary search
+    public array $titleNormSorted = [];
+    public array $authorNormSorted = [];
+    public array $genreNormSorted = [];
+
     // 1️⃣ Load / assign books
     public function loadBook(LibraryBook $book): void {
         $this->assignedBooks[] = $book;
@@ -20,6 +25,21 @@ class WorkerNode {
         usort($this->titleSorted, fn($a,$b)=>strcmp($a->title,$b->title));
         usort($this->authorSorted, fn($a,$b)=>strcmp($a->author,$b->author));
         usort($this->genreSorted, fn($a,$b)=>strcmp($a->genre,$b->genre));
+
+        // Build normalized sorted arrays for hybrid prefix range search
+        $this->titleNormSorted = array_map(function($b){
+            return ['norm' => Utils::normalize($b->title), 'book' => $b];
+        }, $this->assignedBooks);
+        $this->authorNormSorted = array_map(function($b){
+            return ['norm' => Utils::normalize($b->author), 'book' => $b];
+        }, $this->assignedBooks);
+        $this->genreNormSorted = array_map(function($b){
+            return ['norm' => Utils::normalize($b->genre), 'book' => $b];
+        }, $this->assignedBooks);
+
+        usort($this->titleNormSorted, fn($a,$b)=>strcmp($a['norm'],$b['norm']));
+        usort($this->authorNormSorted, fn($a,$b)=>strcmp($a['norm'],$b['norm']));
+        usort($this->genreNormSorted, fn($a,$b)=>strcmp($a['norm'],$b['norm']));
     }
 
     // 3️⃣ Binary search (USED during search)

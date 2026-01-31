@@ -43,6 +43,40 @@ try {
 
     <div id="result"></div>
 </div>
+
+<!-- Separate container for comparison table below the main search container -->
+<div class="container" id="comparisonContainer">
+    <div id="comparison" class="comparison-card">
+        <h3>📊 Linear vs Hybrid</h3>
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th>Algorithm</th>
+                    <th>Algo Time (s)</th>
+                    <th>Total Time (s)</th>
+                    <th>Memory (bytes)</th>
+                    <th>Results</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Linear</td>
+                    <td>0.00000</td>
+                    <td>0.00000</td>
+                    <td>0</td>
+                    <td>0</td>
+                </tr>
+                <tr>
+                    <td>Hybrid</td>
+                    <td>0.00000</td>
+                    <td>0.00000</td>
+                    <td>0</td>
+                    <td>0</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
 <div id="stats" class="stats-below">
     ⏱ Retrieval time: 0s | 💾 Memory used: 0 bytes
 </div>
